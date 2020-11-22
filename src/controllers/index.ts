@@ -3,3 +3,4 @@ export * from './ping.controller';
 // export * from './evento-opcion.controller';
 export * from './evento-opcion.controller';
 export * from './evento-invitado.controller';
+export * from './user.controller';

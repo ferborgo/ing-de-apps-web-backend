@@ -143,6 +143,8 @@ export class UserController {
     })
     newUserRequest: NewUserRequest,
   ): Promise<User> {
+    console.log('sign up');
+    console.log(newUserRequest);
     const password = await hash(newUserRequest.password, await genSalt());
     const savedUser = await this.userRepository.create(
       _.omit(newUserRequest, 'password'),

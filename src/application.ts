@@ -50,6 +50,16 @@ export class PruebaloopbackApplication extends BootMixin(
     this.component(JWTAuthenticationComponent);
     this.component(AuthorizationComponent);
     this.dataSource(MongoCloudDataSource, UserServiceBindings.DATASOURCE_NAME);
+    this.setUpBindings();
+  }
 
+  setUpBindings(): void {
+    // this.bind(PasswordHasherBindings.ROUNDS).to(10);
+    // this.bind(PasswordHasherBindings.PASSWORD_HASHER).toClass(BcryptHasher);
+    // this.bind(TokenServiceBindings.TOKEN_SERVICE).toClass(JWTCustomService);
+    // this.bind(UserServiceBindings.USER_SERVICE).toClass(MyUserService);
+    // this.bind(CustomAuthorizeProvider.AUTHORIZE_PROVIDER)
+    //   .toProvider(Customauthorize).tag(AuthorizationTags.AUTHORIZER);
+    // }
   }
 }

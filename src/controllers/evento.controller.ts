@@ -1,25 +1,6 @@
-import {
-  Count,
-  CountSchema,
-  Filter,
-  FilterExcludingWhere,
-  repository,
-  Where
-} from '@loopback/repository';
-import {
-  del, get,
-  getModelSchemaRef, param,
-
-
-  patch, post,
-
-
-
-
-  put,
-
-  requestBody
-} from '@loopback/rest';
+import {authenticate} from '@loopback/authentication';
+import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
+import {del, get, getModelSchemaRef, param, patch, post, put, requestBody} from '@loopback/rest';
 import {Evento} from '../models';
 import {EventoRepository} from '../repositories';
 
@@ -27,7 +8,7 @@ export class EventoController {
   constructor(
     @repository(EventoRepository)
     public eventoRepository: EventoRepository,
-  ) {}
+  ) { }
 
   @post('/eventos', {
     responses: {
@@ -53,6 +34,7 @@ export class EventoController {
     return this.eventoRepository.create(evento);
   }
 
+  @authenticate('jwt')
   @get('/eventos/count', {
     responses: {
       '200': {

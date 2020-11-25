@@ -1,6 +1,6 @@
 import {authenticate} from '@loopback/authentication';
 import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
-import {del, get, getModelSchemaRef, param, patch, post, put, requestBody} from '@loopback/rest';
+import {del, get, getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody} from '@loopback/rest';
 import {Evento} from '../models';
 import {EventoRepository} from '../repositories';
 
@@ -49,6 +49,7 @@ export class EventoController {
     return this.eventoRepository.count(where);
   }
 
+  @authenticate('jwt')
   @get('/eventos', {
     responses: {
       '200': {
@@ -163,10 +164,18 @@ export class EventoController {
     @requestBody() args: {password: string},
   ): Promise<any> {
     const evento = await this.eventoRepository.findById(id);
+    console.log('Args password: ', args.password);
+    console.log('Evento password: ', evento.password);
     const res = evento.password == args.password;
-    return new Promise((resolve, reject) => {
-      if (res) resolve({mensaje: 'Contraseña correcta'});
-      reject({mensaje: 'Contraseña INCORRECTA'});
-    });
+    if (res) {
+      return {
+        mensaje: 'Todo ok'
+      }
+    } else {
+      // https://loopback.io/doc/en/lb4/Controller.html
+      const error = new HttpErrors[400];
+      error.message = 'Contraseña incorrecta';
+      throw error;
+    }
   }
 }

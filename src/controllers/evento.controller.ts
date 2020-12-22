@@ -1,6 +1,9 @@
-import {authenticate} from '@loopback/authentication';
+import {authenticate, TokenService} from '@loopback/authentication';
+import {MyUserService, TokenServiceBindings, UserRepository, UserServiceBindings} from '@loopback/authentication-jwt';
+import {inject} from '@loopback/core';
 import {Count, CountSchema, Filter, FilterExcludingWhere, repository, Where} from '@loopback/repository';
 import {del, get, getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody} from '@loopback/rest';
+import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {Evento} from '../models';
 import {EventoRepository} from '../repositories';
 
@@ -8,6 +11,14 @@ export class EventoController {
   constructor(
     @repository(EventoRepository)
     public eventoRepository: EventoRepository,
+    @repository(UserRepository)
+    public userRepositoru: UserRepository,
+    @inject(TokenServiceBindings.TOKEN_SERVICE)
+    public jwtService: TokenService,
+    @inject(UserServiceBindings.USER_SERVICE)
+    public userService: MyUserService,
+    @inject(SecurityBindings.USER, {optional: true})
+    public user: UserProfile,
   ) { }
 
   @post('/eventos', {
@@ -70,6 +81,46 @@ export class EventoController {
   ): Promise<Evento[]> {
     return this.eventoRepository.find(filter);
   }
+
+
+  @authenticate('jwt')
+  @get('/eventos/user', {
+    responses: {
+      '200': {
+        description: 'Array of Evento model instances',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'array',
+              items: getModelSchemaRef(Evento, {includeRelations: true}),
+            },
+          },
+        },
+      },
+    },
+  })
+  async findForUser(
+    @inject(SecurityBindings.USER) currentUserProfile: UserProfile,
+  ): Promise<Evento[]> {
+    const id = currentUserProfile[securityId];
+
+    const filter: Filter<Evento> = {
+      include: [
+        {
+          relation: 'opciones'
+        },
+        {
+          relation: 'invitados'
+        }
+      ],
+      where: {
+        usuarioCreadorID: id
+      }
+    }
+    return this.eventoRepository.find(filter);
+  }
+
+
 
   @patch('/eventos', {
     responses: {

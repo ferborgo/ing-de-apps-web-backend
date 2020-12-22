@@ -19,7 +19,7 @@ export class Evento extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   descripcion: string;
 
@@ -34,6 +34,12 @@ export class Evento extends Entity {
 
   @hasMany(() => Invitado)
   invitados: Invitado[];
+
+  @property({
+    type: 'string',
+    required: false
+  })
+  usuarioCreadorID: string
 
   constructor(data?: Partial<Evento>) {
     super(data);

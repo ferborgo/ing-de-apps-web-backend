@@ -4,7 +4,7 @@ import {juggler} from '@loopback/repository';
 const config = {
   name: 'mongoCloud',
   connector: 'mongodb',
-  url: 'mongodb+srv://fernando:KSTVt8KOLLDWgKJI@cluster0.s1c8p.mongodb.net/<dbname>?retryWrites=true&w=majority',
+  url: 'mongodb://fernando:RyNgCh3D12MruG04@cluster0-shard-00-00.s1c8p.mongodb.net:27017,cluster0-shard-00-01.s1c8p.mongodb.net:27017,cluster0-shard-00-02.s1c8p.mongodb.net:27017/%3Cdbname%3E?ssl=true&replicaSet=atlas-cby9pq-shard-0&authSource=admin&retryWrites=true&w=majority',
   host: '',
   port: 0,
   user: '',

@@ -1,4 +1,5 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, hasMany} from '@loopback/repository';
+import {OpcionElegida} from './opcion-elegida.model';
 
 @model()
 export class Opcion extends Entity {
@@ -25,6 +26,9 @@ export class Opcion extends Entity {
     type: 'string',
   })
   eventoId?: string;
+
+  @hasMany(() => OpcionElegida)
+  opcionElegidas: OpcionElegida[];
 
   constructor(data?: Partial<Opcion>) {
     super(data);

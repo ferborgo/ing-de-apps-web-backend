@@ -42,7 +42,8 @@ export class EventoController {
     })
     evento: Omit<Evento, 'id'>,
   ): Promise<Evento> {
-    evento.codigoResultados = Math.random().toString().split('.')[1].slice(0, 4);
+    if (!evento.resultadosPublicos)
+      evento.codigoResultados = Math.random().toString().split('.')[1].slice(0, 4);
     return this.eventoRepository.create(evento);
   }
 

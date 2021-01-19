@@ -42,6 +42,7 @@ export class EventoController {
     })
     evento: Omit<Evento, 'id'>,
   ): Promise<Evento> {
+    evento.codigoResultados = Math.random().toString().split('.')[1].slice(0, 4);
     return this.eventoRepository.create(evento);
   }
 
@@ -226,6 +227,27 @@ export class EventoController {
       // https://loopback.io/doc/en/lb4/Controller.html
       const error = new HttpErrors[400];
       error.message = 'Contraseña incorrecta';
+      throw error;
+    }
+  }
+
+  @post('/eventos/{id}/validarCodigoResultado')
+  async validarCodigoResultados(
+    @param.path.string('id') id: string,
+    @requestBody() args: {codigoResultados: string},
+  ): Promise<any> {
+    const evento = await this.eventoRepository.findById(id);
+    console.log('Args codigo: ', args.codigoResultados);
+    console.log('Evento codigo: ', evento.codigoResultados);
+    const res = evento.codigoResultados == args.codigoResultados;
+    if (res) {
+      return {
+        mensaje: 'Todo ok'
+      }
+    } else {
+      // https://loopback.io/doc/en/lb4/Controller.html
+      const error = new HttpErrors[400];
+      error.message = 'Código de resultados incorrecto';
       throw error;
     }
   }

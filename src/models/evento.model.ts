@@ -29,6 +29,30 @@ export class Evento extends Entity {
   })
   password: string;
 
+  @property({
+    type: 'string',
+    required: false
+  })
+  codigoResultados: string;
+
+  @property({
+    type: 'boolean',
+    required: true
+  })
+  resultadosPublicos: boolean;
+
+  @property({
+    type: 'boolean',
+    required: true
+  })
+  soloUnaOpcion: boolean;
+
+  @property({
+    type: 'boolean',
+    required: true
+  })
+  invitadosDinamicos: boolean;
+
   @hasMany(() => Opcion)
   opciones: Opcion[];
 

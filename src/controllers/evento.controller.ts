@@ -112,7 +112,12 @@ export class EventoController {
           relation: 'opciones'
         },
         {
-          relation: 'invitados'
+          relation: 'invitados',
+          scope: {
+            include: [{
+              relation: 'opcionElegidas'
+            }]
+          }
         }
       ],
       where: {

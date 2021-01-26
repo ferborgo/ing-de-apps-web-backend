@@ -12,6 +12,7 @@ import {model, property, repository} from '@loopback/repository';
 import {
   get,
   getModelSchemaRef,
+  HttpErrors,
   post,
   requestBody,
   SchemaObject
@@ -84,7 +85,7 @@ export class UserController {
   })
   async login(
     @requestBody(CredentialsRequestBody) credentials: Credentials,
-  ): Promise<{token: string}> {
+  ): Promise<{token: string, admin: string}> {
     // ensure the user exists, and the password is correct
     const user = await this.userService.verifyCredentials(credentials);
     // convert a User object into a UserProfile object (reduced set of properties)
@@ -92,7 +93,8 @@ export class UserController {
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
-    return {token};
+    const admin: string = String(user.admin);
+    return {token, admin};
   }
 
   @authenticate('jwt')
@@ -115,6 +117,38 @@ export class UserController {
     currentUserProfile: UserProfile,
   ): Promise<string> {
     return currentUserProfile[securityId];
+  }
+
+  @authenticate('jwt')
+  @get('/users', {
+    responses: {
+      '200': {
+        description: 'Return user',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
+  })
+  async getUsers(
+    @inject(SecurityBindings.USER)
+    currentUserProfile: UserProfile,
+  ): Promise<User[]> {
+    const id = currentUserProfile[securityId];
+    const user = await this.userService.findUserById(id);
+    console.log(user);
+    if (user.admin) {
+      return this.userService.userRepository.find();
+    } else {
+      // https://loopback.io/doc/en/lb4/Controller.html
+      const error = new HttpErrors[403];
+      error.message = 'Sólo administradores pueden hacer esta petición';
+      throw error;
+    }
   }
 
   @post('/signup', {
@@ -145,6 +179,45 @@ export class UserController {
   ): Promise<User> {
     console.log('sign up');
     console.log(newUserRequest);
+    const password = await hash(newUserRequest.password, await genSalt());
+    const savedUser = await this.userRepository.create(
+      _.omit(newUserRequest, 'password'),
+    );
+
+    await this.userRepository.userCredentials(savedUser.id).create({password});
+
+    return savedUser;
+  }
+
+  @post('/signupAdmin', {
+    responses: {
+      '200': {
+        description: 'User',
+        content: {
+          'application/json': {
+            schema: {
+              'x-ts-type': User,
+            },
+          },
+        },
+      },
+    },
+  })
+  async newAdminUser(
+    @requestBody({
+      content: {
+        'application/json': {
+          schema: getModelSchemaRef(NewUserRequest, {
+            title: 'NewUser',
+          }),
+        },
+      },
+    })
+    newUserRequest: NewUserRequest,
+  ): Promise<User> {
+    console.log('sign up');
+    console.log(newUserRequest);
+    newUserRequest.admin = true;
     const password = await hash(newUserRequest.password, await genSalt());
     const savedUser = await this.userRepository.create(
       _.omit(newUserRequest, 'password'),

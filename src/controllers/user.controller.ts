@@ -10,9 +10,11 @@ import {
 import {inject} from '@loopback/core';
 import {model, property, repository} from '@loopback/repository';
 import {
+  del,
   get,
   getModelSchemaRef,
   HttpErrors,
+  param,
   post,
   requestBody,
   SchemaObject
@@ -20,6 +22,7 @@ import {
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
 import {genSalt, hash} from 'bcryptjs';
 import _ from 'lodash';
+import {EventoRepository} from '../repositories/evento.repository';
 
 @model()
 export class NewUserRequest extends User {
@@ -62,6 +65,7 @@ export class UserController {
     @inject(SecurityBindings.USER, {optional: true})
     public user: UserProfile,
     @repository(UserRepository) protected userRepository: UserRepository,
+    @repository(EventoRepository) protected eventoRepository: EventoRepository,
   ) { }
 
   @post('/users/login', {
@@ -93,7 +97,7 @@ export class UserController {
 
     // create a JSON Web Token based on the user profile
     const token = await this.jwtService.generateToken(userProfile);
-    const admin: string = String(user.admin);
+    const admin: string = String(user.admin) || 'false';
     return {token, admin};
   }
 
@@ -226,5 +230,29 @@ export class UserController {
     await this.userRepository.userCredentials(savedUser.id).create({password});
 
     return savedUser;
+  }
+
+  @authenticate('jwt')
+  @del('/users/{id}', {
+    responses: {
+      '204': {
+        description: 'Evento DELETE success',
+      },
+    },
+  })
+  async deleteById(@param.path.string('id') id: string): Promise<void> {
+
+    const usuarioID: string = id;
+    const eventos = await this.eventoRepository.find({where: {usuarioCreadorID: usuarioID}});
+    eventos.forEach(async evento => {
+      console.log('Por eliminar el evento ', evento.id);
+      let r = await this.eventoRepository.deleteById(evento.id);
+      console.log('Respuesta: ', r);
+      console.log('------------')
+    });
+    console.log('Se eliminaron todos los eventos');
+    const response = await this.userRepository.deleteById(id);
+    console.log(response);
+    return response;
   }
 }

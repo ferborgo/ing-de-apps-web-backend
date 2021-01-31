@@ -51,6 +51,12 @@ export class Evento extends Entity {
     type: 'boolean',
     required: true
   })
+  activo: boolean;
+
+  @property({
+    type: 'boolean',
+    required: true
+  })
   invitadosDinamicos: boolean;
 
   @hasMany(() => Opcion)

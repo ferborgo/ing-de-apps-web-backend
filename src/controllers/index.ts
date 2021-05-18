@@ -8,3 +8,4 @@ export * from './invitado-opcion-elegida.controller';
 export * from './opcion-opcion-elegida.controller';
 export * from './opcion-elegida.controller';
 export * from './invitado.controller';
+export * from './mercadopago.controller';

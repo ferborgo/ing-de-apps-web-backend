@@ -68,6 +68,58 @@ export class UserController {
     @repository(EventoRepository) protected eventoRepository: EventoRepository,
   ) { }
 
+  @post('/users/postSocialLogin', {
+    responses: {
+      '200': {
+        description: 'Token',
+        content: {
+          'application/json': {
+            schema: {
+              type: 'object',
+              properties: {
+                token: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+  async postSocialLogin(
+    @requestBody() data: any,
+  ): Promise<{token: string, admin: string}> {
+
+    console.log('DATA: ', data);
+
+    let user: User;
+    try {
+      user = await this.userService.findUserById(data.googleId);
+    } catch (error) {
+      console.log('ERROR: ', error);
+      user = await this.userRepository.create({
+        email: data.email,
+        id: data.googleId,
+        username: data.username
+      });
+    }
+
+    console.log('USER: ', user);
+
+    const userProfile = this.userService.convertToUserProfile(user);
+
+    console.log('USER PROFILE: ', userProfile);
+
+    // create a JSON Web Token based on the user profile
+    const token = await this.jwtService.generateToken(userProfile);
+    const admin: string = String(user.admin) || 'false';
+
+    console.log('token y admin: ', {token, admin})
+
+    return {token, admin};
+  }
+
   @post('/users/login', {
     responses: {
       '200': {

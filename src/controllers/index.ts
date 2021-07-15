@@ -9,3 +9,4 @@ export * from './opcion-opcion-elegida.controller';
 export * from './opcion-elegida.controller';
 export * from './invitado.controller';
 export * from './mercadopago.controller';
+export * from './suscripcion.controller';

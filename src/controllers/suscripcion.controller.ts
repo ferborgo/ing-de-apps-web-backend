@@ -11,6 +11,7 @@ import {
   getModelSchemaRef, param, patch, post, put, requestBody
 } from '@loopback/rest';
 import {SecurityBindings, securityId, UserProfile} from '@loopback/security';
+import moment from 'moment';
 import {Suscripcion} from '../models';
 import {SuscripcionRepository} from '../repositories';
 
@@ -160,5 +161,23 @@ export class SuscripcionController {
     const id = currentUserProfile[securityId];
 
     return this.suscripcionRepository.find({where: {usuarioID: id}});
+  }
+
+
+  @authenticate('jwt')
+  @get('suscripciones/mesActualPago')
+  async mesPago(@inject(SecurityBindings.USER) currentUserProfile: UserProfile): Promise<boolean> {
+
+    const id = currentUserProfile[securityId];
+
+    const suscripciones = await this.suscripcionRepository.find({where: {usuarioID: id}});
+
+    const sorted = suscripciones.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
+
+    const lastOne = sorted[sorted.length - 1];
+
+    const diff = moment().diff(moment(lastOne.fecha), 'month');
+
+    return diff < 1;
   }
 }

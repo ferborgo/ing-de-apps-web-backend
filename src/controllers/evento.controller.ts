@@ -44,6 +44,7 @@ export class EventoController {
   ): Promise<Evento> {
     if (!evento.resultadosPublicos)
       evento.codigoResultados = Math.random().toString().split('.')[1].slice(0, 4);
+    evento.fechaCreacion = new Date();
     return this.eventoRepository.create(evento);
   }
 

@@ -69,7 +69,13 @@ export class Evento extends Entity {
     type: 'string',
     required: false
   })
-  usuarioCreadorID: string
+  usuarioCreadorID: string;
+
+  @property({
+    type: 'date',
+    required: true
+  })
+  fechaCreacion: Date;
 
   constructor(data?: Partial<Evento>) {
     super(data);

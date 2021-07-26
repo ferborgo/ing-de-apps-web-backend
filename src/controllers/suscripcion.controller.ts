@@ -172,6 +172,7 @@ export class SuscripcionController {
 
     const suscripciones = await this.suscripcionRepository.find({where: {usuarioID: id}});
 
+    if (suscripciones.length == 0) return false;
     const sorted = suscripciones.sort((a, b) => new Date(a.fecha).getTime() - new Date(b.fecha).getTime());
 
     const lastOne = sorted[sorted.length - 1];

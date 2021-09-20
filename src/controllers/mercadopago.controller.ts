@@ -31,9 +31,9 @@ export class MercadopagoController {
         quantity: Number(req.quantity),
       }],
       back_urls: {
-        "success": "http://localhost:4200/home/mercadopago/success",
-        "failure": "http://localhost:4200/home/mercadopago/failure",
-        "pending": "http://localhost:4200/home/mercadopago/pending"
+        "success": "https://main.dxsifmsfqs4t0.amplifyapp.com/home/mercadopago/success",
+        "failure": "https://main.dxsifmsfqs4t0.amplifyapp.com/home/mercadopago/failure",
+        "pending": "https://main.dxsifmsfqs4t0.amplifyapp.com/home/mercadopago/pending"
       },
       auto_return: 'approved',
     };
@@ -52,9 +52,9 @@ export class MercadopagoController {
         quantity: 1,
       }],
       back_urls: {
-        "success": "http://localhost:4200",
-        "failure": "http://localhost:4200",
-        "pending": "http://localhost:4200"
+        "success": "http://localhost:3000/home/mercadopago/success",
+        "failure": "http://localhost:3000/home/mercadopago/failure",
+        "pending": "http://localhost:3000/home/mercadopago/pending"
       },
       auto_return: 'approved',
     };

@@ -17,6 +17,9 @@ mercadopago.configure({
   access_token: "TEST-5852615894997727-070723-ccb24edb354c8f37cb6468f9507bb2ce-787698969"
 });
 
+// Al levantarlo local poner el true, cuando se pushea poner en false.
+const local: boolean = false;
+const back_url = (local) ? 'http://localhost:4200' : 'https://main.dxsifmsfqs4t0.amplifyapp.com';
 
 export class MercadopagoController {
   constructor() { }
@@ -31,9 +34,9 @@ export class MercadopagoController {
         quantity: Number(req.quantity),
       }],
       back_urls: {
-        "success": "https://main.dxsifmsfqs4t0.amplifyapp.com/home/mercadopago/success",
-        "failure": "https://main.dxsifmsfqs4t0.amplifyapp.com/home/mercadopago/failure",
-        "pending": "https://main.dxsifmsfqs4t0.amplifyapp.com/home/mercadopago/pending"
+        "success": `${back_url}/home/mercadopago/success`,
+        "failure": `${back_url}/home/mercadopago/failure`,
+        "pending": `${back_url}/home/mercadopago/pending`
       },
       auto_return: 'approved',
     };
@@ -52,9 +55,9 @@ export class MercadopagoController {
         quantity: 1,
       }],
       back_urls: {
-        "success": "http://localhost:3000/home/mercadopago/success",
-        "failure": "http://localhost:3000/home/mercadopago/failure",
-        "pending": "http://localhost:3000/home/mercadopago/pending"
+        "success": `${back_url}/home/mercadopago/success`,
+        "failure": `${back_url}/home/mercadopago/failure`,
+        "pending": `${back_url}/home/mercadopago/pending`
       },
       auto_return: 'approved',
     };
